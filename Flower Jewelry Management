@@ -1,0 +1,252 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Account {
+    String username;
+    String password;
+}
+
+class Product {
+    String name;
+    int price;
+    int id;
+    String flowerType;
+    int quantity;
+}
+
+public class FlowerJewelryShop {
+    static Scanner scanner = new Scanner(System.in);
+    static ArrayList<Product> inventory = new ArrayList<>();
+    static ArrayList<Product> cart = new ArrayList<>();
+
+    public static void createStaffAccount(Account account) {
+        System.out.print("Create staff username: ");
+        account.username = scanner.next();
+
+        System.out.print("Create staff password: ");
+        account.password = scanner.next();
+
+        System.out.println("Staff account created successfully!");
+    }
+
+    public static void createCustomerAccount(Account account) {
+        System.out.print("Create customer username: ");
+        account.username = scanner.next();
+
+        System.out.print("Create customer password: ");
+        account.password = scanner.next();
+
+        System.out.println("Customer account created successfully!");
+    }
+
+    public static void insertProduct(Product newProduct) {
+        if (inventory.size() >= 100) {
+            System.out.println("Inventory is full. Cannot add more products.");
+            return;
+        }
+
+        int i = 0;
+        while (i < inventory.size() && newProduct.name.compareTo(inventory.get(i).name) > 0) {
+            i++;
+        }
+        inventory.add(i, newProduct);
+        System.out.println("Floral Jewelry '" + newProduct.name + "' added successfully!");
+    }
+
+    public static void deleteProduct(String productName) {
+        boolean found = false;
+        for (int i = 0; i < inventory.size(); i++) {
+            if (inventory.get(i).name.equals(productName)) {
+                inventory.remove(i);
+                System.out.println("Floral Jewelry '" + productName + "' deleted successfully!");
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Floral Jewelry '" + productName + "' not found.");
+        }
+    }
+
+    public static void searchProduct(String productName) {
+        boolean found = false;
+        for (Product product : inventory) {
+            if (product.name.equals(productName)) {
+                found = true;
+                System.out.println("Flower Jewelry: " + product.name);
+                System.out.println("ID: " + product.id);
+                System.out.println("Price: " + product.price + " BDT");
+                System.out.println("Flower Type: " + product.flowerType);
+                System.out.println("Quantity: " + product.quantity);
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Flower Jewelry '" + productName + "' not found.");
+        }
+    }
+
+    public static void displayInventory() {
+        System.out.println("\nFlower Jewelry Inventory:");
+        for (int i = 0; i < inventory.size(); i++) {
+            Product product = inventory.get(i);
+            System.out.println((i + 1) + ". " + product.name + " - ID: " + product.id + 
+                               " - Price: " + product.price + "BDT - Flower Type: " + 
+                               product.flowerType + " - Quantity: " + product.quantity);
+        }
+    }
+
+    public static void addToCart(int itemId) {
+        for (Product product : inventory) {
+            if (product.id == itemId) {
+                cart.add(product);
+                System.out.println("Added '" + product.name + "' to the cart.");
+                return;
+            }
+        }
+        System.out.println("Item with ID " + itemId + " not found in the inventory.");
+    }
+
+    public static void viewCart() {
+        if (cart.isEmpty()) {
+            System.out.println("The shopping cart is empty.");
+            return;
+        }
+
+        System.out.println("\nShopping Cart:");
+        for (int i = 0; i < cart.size(); i++) {
+            Product product = cart.get(i);
+            System.out.println((i + 1) + ". " + product.name + " - " + product.price + 
+                               " BDT (Quantity: " + product.quantity + ")");
+        }
+    }
+
+    public static void main(String[] args) {
+        Account staffAccount = new Account();
+        Account customerAccount = new Account();
+        boolean continueProgram = true;
+
+        System.out.print("Are you Staff or Customer? ");
+        String userType = scanner.next();
+
+        if (userType.equalsIgnoreCase("staff")) {
+            System.out.println("Welcome To Flower Jewelry Shop And Management System!");
+            createStaffAccount(staffAccount);
+
+            boolean successfulLogin = false;
+            while (!successfulLogin) {
+                System.out.print("Enter staff username: ");
+                String enteredUsername = scanner.next();
+
+                System.out.print("Enter staff password: ");
+                String enteredPassword = scanner.next();
+
+                if (enteredUsername.equals(staffAccount.username) && enteredPassword.equals(staffAccount.password)) {
+                    System.out.println("Staff login successful!");
+                    successfulLogin = true;
+                } else {
+                    System.out.println("Staff login failed. Please try again.");
+                }
+            }
+
+            while (continueProgram) {
+                System.out.println("\nFloral Jewelry Shop And Management System");
+                System.out.println("1. Insert Flower Jewelry");
+                System.out.println("2. Delete Flower Jewelry");
+                System.out.println("3. Search Flower Jewelry by Name");
+                System.out.println("4. Display Inventory");
+                System.out.println("5. Exit");
+
+                System.out.print("Enter your choice: ");
+                int choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        Product newProduct = new Product();
+                        System.out.print("Enter flower jewelry name: ");
+                        newProduct.name = scanner.next();
+                        System.out.print("Enter jewelry ID: ");
+                        newProduct.id = scanner.nextInt();
+                        System.out.print("Enter jewelry price: ");
+                        newProduct.price = scanner.nextInt();
+                        System.out.print("Enter flower type: ");
+                        newProduct.flowerType = scanner.next();
+                        System.out.print("Enter quantity: ");
+                        newProduct.quantity = scanner.nextInt();
+                        insertProduct(newProduct);
+                        break;
+                    case 2:
+                        System.out.print("Enter flower jewelry name to delete: ");
+                        String productName = scanner.next();
+                        deleteProduct(productName);
+                        break;
+                    case 3:
+                        System.out.print("Enter flower jewelry name to search: ");
+                        productName = scanner.next();
+                        searchProduct(productName);
+                        break;
+                    case 4:
+                        displayInventory();
+                        break;
+                    case 5:
+                        System.out.println("Exiting Staff Panel.");
+                        continueProgram = false;
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                        break;
+                }
+            }
+        } else if (userType.equalsIgnoreCase("customer")) {
+            System.out.println("Welcome To Flower Jewelry Shop And Management System!");
+            createCustomerAccount(customerAccount);
+
+            boolean successfulLogin = false;
+            while (!successfulLogin) {
+                System.out.print("Enter customer username: ");
+                String enteredUsername = scanner.next();
+
+                System.out.print("Enter customer password: ");
+                String enteredPassword = scanner.next();
+
+                if (enteredUsername.equals(customerAccount.username) && enteredPassword.equals(customerAccount.password)) {
+                    System.out.println("Customer login successful!");
+                    successfulLogin = true;
+                } else {
+                    System.out.println("Customer login failed. Please try again.");
+                }
+            }
+
+            while (continueProgram) {
+                System.out.println("\n1. Add Flower Jewelry to Cart");
+                System.out.println("2. View Cart");
+                System.out.println("3. Exit");
+
+                System.out.print("Enter your choice: ");
+                int choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        System.out.print("Enter the item ID to add to cart: ");
+                        int itemId = scanner.nextInt();
+                        addToCart(itemId);
+                        break;
+                    case 2:
+                        viewCart();
+                        break;
+                    case 3:
+                        System.out.println("Exiting Customer Panel.");
+                        continueProgram = false;
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                        break;
+                }
+            }
+        } else {
+            System.out.println("Invalid user type.");
+        }
+    }
+}
